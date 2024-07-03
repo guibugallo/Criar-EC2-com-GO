@@ -12,18 +12,18 @@ import (
 )
 
 func main() {
-	// Carregar a configuração da AWS
+	// Carregar config da AWS
 	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("us-west-2"))
 	if err != nil {
 		log.Fatalf("não foi possível carregar a configuração do SDK, %v", err)
 	}
 
-	// Criar um client EC2
+	// Criar client EC2
 	svc := ec2.NewFromConfig(cfg)
 
 	// Especificar os detalhes da instância
 	runResult, err := svc.RunInstances(context.TODO(), &ec2.RunInstancesInput{
-		ImageId:      aws.String("ami-0c55b159cbfafe1f0"), // Substitua pela ID da AMI correta
+		ImageId:      aws.String("ami-0c55b159cbfafe1f0"), // LEMBRAR DE SUBSTITUIR A ID da AMI correta!!!!
 		InstanceType: types.InstanceTypeT2Micro,
 		MinCount:     aws.Int32(1),
 		MaxCount:     aws.Int32(1),
@@ -36,7 +36,7 @@ func main() {
 	instanceID := *runResult.Instances[0].InstanceId
 	fmt.Printf("Instância criada com ID: %s\n", instanceID)
 
-	// Adicionar tags à instância
+	// add tags à instância
 	_, err = svc.CreateTags(context.TODO(), &ec2.CreateTagsInput{
 		Resources: []string{instanceID},
 		Tags: []types.Tag{
@@ -52,7 +52,7 @@ func main() {
 
 	fmt.Println("Tag adicionada com sucesso à instância")
 
-	// Esperar até que a instância esteja em estado "running"
+	// Esperando estado "running" da instância
 	err = svc.WaitUntilInstanceRunning(context.TODO(), &ec2.DescribeInstancesInput{
 		InstanceIds: []string{instanceID},
 	})
