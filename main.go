@@ -11,9 +11,22 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
 )
 
-func main() {
-	// Carregar config da AWS
-	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("us-west-2"))
+	func main() {
+	
+	cfgFile, err := ini.Load("config.ini")
+	if err != nil {
+		log.Fatalf("não foi possível carregar o arquivo config.ini, %v", err)
+	}
+
+	awsAccessKeyID := cfgFile.Section("default").Key("aws_access_key_id").String()
+	awsSecretAccessKey := cfgFile.Section("default").Key("aws_secret_access_key").String()
+	awsRegion := cfgFile.Section("default").Key("region").String()
+
+	// Carregar a config AWS com credenciais fornecidas no arquivo config.ini
+	cfg, err := config.LoadDefaultConfig(context.TODO(),
+		config.WithRegion(awsRegion),
+		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(awsAccessKeyID, awsSecretAccessKey, "")),
+	)
 	if err != nil {
 		log.Fatalf("não foi possível carregar a configuração do SDK, %v", err)
 	}
