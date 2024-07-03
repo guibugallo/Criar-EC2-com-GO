@@ -11,7 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
 )
 
-	func main() {
+func main() {
 	
 	cfgFile, err := ini.Load("config.ini")
 	if err != nil {
